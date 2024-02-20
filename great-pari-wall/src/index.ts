@@ -18,7 +18,7 @@ export default {
       const cc = bodyJson.cc?.length ?? 0;
 
       // Check if mentions exceed the limit
-      const mentions = (bodyJson.text || '').match(/@.*?@.*?\..*?/g) || [];
+      const mentions = (bodyJson.text || '').match(/@(\w+)(?:@([\w.-]+))?/g) || [];
 
       if (mentions.length > atLimit) {
         return new Response(JSON.stringify({
