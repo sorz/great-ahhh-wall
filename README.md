@@ -9,11 +9,10 @@ False postive exists, use with caution.
 
 You can customize the error messages and value of limits in index.js.
 
-0. Install Node.js and
-   [Wrangler](https://developers.cloudflare.com/workers/wrangler/install-and-update/)
-   `npm install wrangler --save-dev`
-1. `pnpm run deploy` to deploy.
-2. Add following routes to Workers Routes.
+1. Install Node.js and [pnpm](https://pnpm.io/)
+2. `pnpm install`
+3. `pnpm run deploy` to deploy
+4. Add following routes to Workers Routes
    - `[YourDomain]/inbox`
    - `[YourDomain]/users/*`
 
