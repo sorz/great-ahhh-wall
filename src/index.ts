@@ -1,60 +1,33 @@
+const CC_LIMIT = 9;
+
 export default {
   async fetch(request: Request) {
-    const ccLimit = 4;
-    const atLimit = 3;
-
-    // If the request method is HEAD or GET, return it as it is.
-    if (request.method === 'HEAD' || request.method === 'GET') {
-      return await fetch(request.url, {
-        method: request.method,
-        headers: request.headers,
-      });
+    // Only for POST /inbox
+    if (request.method !== 'POST' || !request.url.endsWith('/inbox')) {
+      return fetch(request);
     }
 
-    const body = await request.text();
-
+    const bodyText = await request.text();
     try {
-      const bodyJson = JSON.parse(body);
-      const cc = bodyJson.cc?.length ?? 0;
-
-      // Check if mentions exceed the limit
-      const mentions = (bodyJson.text || '').match(/@(\w+)(?:@([\w.-]+))?/g) || [];
-
-      if (mentions.length > atLimit) {
-        return new Response(JSON.stringify({
-          error: {
-            message: 'Too many Ats.',
-            code: 'TOO_MANY_ATS',
-            id: 'c7e10ff1-042f-441a-b490-836956560650',
-          }
-        }), {
-          // Note: Returning a 400 in ActivityPub may result in repeated retries from the remote or, in the worst case, delivery suspension. Therefore, return a 202 for 'inbox'.
-          status: request.url.includes('inbox') ? 202 : 400,
+      const body = JSON.parse(bodyText);
+      const cc = body.cc?.length ?? 0;
+      if (cc > CC_LIMIT) {
+        console.warn({
+          action: 'DROP',
+          activity: body,
         });
+        // https://www.w3.org/wiki/ActivityPub/Primer/HTTP_status_codes_for_delivery
+        // 403 for "a blocked user or domain", "fail delivery permanently"
+        return new Response('Too many mentions', { status: 403 });
       }
-
-      if (cc > ccLimit) {
-        return new Response(JSON.stringify({
-          error: {
-            message: 'Too many mentions.',
-            code: 'TOO_MANY_MENTIONS',
-            id: 'c7e10ff1-042f-441a-b490-836956560650',
-          }
-        }), {
-          // Note: Returning a 400 in ActivityPub may lead to repeated retries from the remote or, in the worst case, delivery suspension. Therefore, return a 202 in the case of 'inbox'.
-          status: request.url.includes('inbox') ? 202 : 400,
-        });
-      }
-    } catch (e) {
-      // do nothing
+    } catch (err) {
+      console.error(err);
     }
 
-    // No badWords filtering
-
-    return await fetch(request.url, {
+    return fetch(request.url, {
       method: 'POST',
       headers: request.headers,
-      body,
+      body: bodyText,
     });
   },
-};
+} satisfies ExportedHandler;

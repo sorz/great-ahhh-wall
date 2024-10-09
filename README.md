@@ -11,8 +11,9 @@ You can customize the error messages and value of limits in index.js.
 
 1. Install Node.js and [pnpm](https://pnpm.io/)
 2. `pnpm install`
-3. `pnpm run deploy` to deploy
-4. Add following routes to Workers Routes
+3. `pnpm run cf-types` to generate types
+4. `pnpm run deploy` to deploy
+5. Add following routes to Workers Routes
    - `[YourDomain]/inbox`
    - `[YourDomain]/users/*`
 
