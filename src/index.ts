@@ -8,8 +8,10 @@ export default {
     const bodyText = await request.text();
     try {
       const body = JSON.parse(bodyText);
-      const cc = body.cc?.length ?? 0;
-      if (cc > env.CC_LIMIT) {
+      const cc = body.cc ?? [];
+      // Some server (GoToSocial) may sent `cc` as single string
+      const ccCount = Array.isArray(cc) ? cc.length : 1;
+      if (ccCount > env.CC_LIMIT) {
         console.warn({
           action: 'DROP',
           activity: body,
