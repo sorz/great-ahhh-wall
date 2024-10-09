@@ -1,9 +1,9 @@
-name = "activitypub-inbox-filter-dev"
+name = "activitypub-inbox-filter"
 compatibility_date = "2023-12-01"
 main = "./src/index.ts"
 
 [observability]
 enabled = true
 
-# [vars]
-# MY_VARIABLE = "production_value"
+[vars]
+CC_LIMIT = 9

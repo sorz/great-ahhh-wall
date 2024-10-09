@@ -1,7 +1,5 @@
-const CC_LIMIT = 9;
-
 export default {
-  async fetch(request: Request) {
+  async fetch(request, env) {
     // Only for POST /inbox
     if (request.method !== 'POST' || !request.url.endsWith('/inbox')) {
       return fetch(request);
@@ -11,7 +9,7 @@ export default {
     try {
       const body = JSON.parse(bodyText);
       const cc = body.cc?.length ?? 0;
-      if (cc > CC_LIMIT) {
+      if (cc > env.CC_LIMIT) {
         console.warn({
           action: 'DROP',
           activity: body,
@@ -30,4 +28,4 @@ export default {
       body: bodyText,
     });
   },
-} satisfies ExportedHandler;
+} satisfies ExportedHandler<Env>;

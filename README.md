@@ -2,20 +2,28 @@
 
 A Cloudflare Workers program protecting ActivityPub inbox from spam.
 
-It simplely drop posts with a lots (e.g. >= 10) mentions.
+It simplely drop posts with a lots (e.g. > 9) mentions.
 False postive exists, use with caution.
 
 ## Deployment
 
-You can customize the error messages and value of limits in index.js.
-
 1. Install Node.js and [pnpm](https://pnpm.io/)
-2. `pnpm install`
-3. `pnpm run cf-types` to generate types
-4. `pnpm run deploy` to deploy
-5. Add following routes to Workers Routes
+2. `pnpm i` to install dependencies
+3. `pnpm run deploy` to deploy
+4. Add following routes to Workers Routes
    - `[YourDomain]/inbox`
    - `[YourDomain]/users/*`
+
+Max allowed mentions `CC_LIMIT` is `9` by default, you can edit it
+on `wrangler.toml` before deploy, or on Cloudflare dashboard after deploy
+(Workers & Pages / activitypub-inbox-filter / Settings / Variables and Secrets).
+
+## Development
+
+Run `pnpm run cf-types` to generate types.
+
+Logs can be found on Cloudflare dashboard.
+
 
 ## Credits
 
