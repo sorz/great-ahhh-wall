@@ -1,13 +1,13 @@
 function checkIsSpam(activity: any, env: Env): [boolean, string] {
   // Only check for notes
-  const type = activity.object?.type;
+  const type = activity.object?.type ?? activity.type;
   if (type !== 'Note') {
-    return [false, `ignore type "${type}"`]
+    return [false, `ignore type ${type}`]
   }
 
   // Ignore replies
   // (until reply-spamming become popular)
-  if (activity.object?.hasOwnProperty('replies')) {
+  if (activity.object?.inReplyTo) {
     return [false, 'ignore replies']
   }
 
@@ -16,7 +16,7 @@ function checkIsSpam(activity: any, env: Env): [boolean, string] {
   // Some server (GoToSocial) may sent `cc` as single string
   const ccCount = Array.isArray(cc) ? cc.length : 1;
   if (ccCount > env.CC_LIMIT) {
-    return [true, `CC excessed (${cc})`]
+    return [true, `CC excessed (${ccCount})`]
   }
 
   // Check mention count
