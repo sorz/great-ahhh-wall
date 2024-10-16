@@ -40,11 +40,14 @@ export default {
     const bodyText = await request.text();
     try {
       const activity = JSON.parse(bodyText);
+      const actor = activity.actor;
       const [isSpam, reason] = checkIsSpam(activity, env);
       if (isSpam) {
         console.warn({
           action: 'DROP',
+          actor,
           reason,
+          activity,
         });
         // https://www.w3.org/wiki/ActivityPub/Primer/HTTP_status_codes_for_delivery
         // 403 for "a blocked user or domain", "fail delivery permanently"
@@ -52,6 +55,7 @@ export default {
       } else {
         console.debug({
           action: 'ACCEPT',
+          actor,
           reason,
         });
       }
